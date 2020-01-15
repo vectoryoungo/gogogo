@@ -7,7 +7,7 @@ import "C"
 import "unsafe"
 
 //test go code call c function
-func main() {
+func Testcprint() {
 	cstr := C.CString("Hello world")
 	C.puts(cstr)
 	C.free(unsafe.Pointer(cstr))
