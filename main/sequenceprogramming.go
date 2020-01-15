@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"gogogo/vmath"
 )
 
 type PersonInfo struct {
@@ -126,11 +125,23 @@ func main()  {
 	//Reflecttest()
 	//Showmsg()
 	//printSlice()
-	result := condition(8)
-	fmt.Println(" result is ",result)
+	//result := condition(8)
+	//fmt.Println(" result is ",result)
+	//
+	//switchCondition(2)
+	//
+	//sum,_ := vmath.Add(2,3)
+	//println(sum)
 
-	switchCondition(2)
-
-	sum,_ := vmath.Add(2,3)
-	println(sum)
+	//
+	var j int = 5
+	a := func() (func()){
+		var i int = 10
+		return func() {
+			fmt.Printf("i, j: %d, %d\n ",i,j)
+		}
+	}()
+	a()
+	j *= 2
+	a()
  }
