@@ -1,6 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"gogogo/vmath"
+)
+
+type PersonInfo struct {
+	ID string
+	Name string
+	Address string
+}
 
 func printVariable() {
 	var i int;
@@ -86,10 +95,42 @@ func PrintMap()  {
 	}
 }
 
+func condition(x int) int {
+	if  x  == 5 {
+		return 5
+	}else {
+		return x
+	}
+}
+
+func switchCondition(x int) {
+	switch x {
+	case 0 :
+		fmt.Println(0)
+	case 1 :
+		fmt.Println(1)
+	case 2 :
+		//fmt.Println(2)
+		fallthrough
+	case 3 :
+		fmt.Println(3)
+	case 4 :
+		fmt.Println(4)
+	default:
+		fmt.Println("nothing")
+	}
+}
+
 func main()  {
 	//Testcprint()
 	//Reflecttest()
 	//Showmsg()
 	//printSlice()
-	PrintMap()
+	result := condition(8)
+	fmt.Println(" result is ",result)
+
+	switchCondition(2)
+
+	sum,_ := vmath.Add(2,3)
+	println(sum)
  }
