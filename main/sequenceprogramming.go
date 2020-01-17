@@ -120,7 +120,7 @@ func switchCondition(x int) {
 	}
 }
 
-func main()  {
+func maine()  {
 	//Testcprint()
 	//Reflecttest()
 	//Showmsg()
