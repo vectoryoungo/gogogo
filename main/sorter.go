@@ -71,7 +71,7 @@ func writeValues(values []int,outfile string) error {
 	return nil
 }
 
-func main() {
+func mainsorter() {
 	flag.Parse()
 	if infile != nil {
 		fmt.Println("infile = ", *infile, "outfile = ", *outfile, "algorithm =", *algorithm)

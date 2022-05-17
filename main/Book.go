@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 )
 
 type Book struct {
@@ -16,7 +17,7 @@ type Book struct {
 /*
  * {"Title":"Go语言编程","Authors":["xushiwei","HughLv"],"Publisher":"ituring.com.cn","IsPublished":true,"Price":9.99}
  */
-func main()  {
+func masin()  {
 	gobook := Book{"Go语言编程",[]string{"xushiwei","HughLv"},"ituring.com.cn",true,9.99}
 	b,err := json.Marshal(gobook)
 	if err != nil {
@@ -30,4 +31,14 @@ func main()  {
 	}
 	fmt.Println("unmarshal result ")
 	fmt.Println(book)
+	var rinterface interface{}
+	json.Unmarshal(b,&rinterface)
+	fmt.Println(rinterface)
+
+	var superX float64 = 3.1415026
+	v := reflect.ValueOf(superX)
+	fmt.Println("type:",v.Type())
+	fmt.Println("kind is float64:",v.Kind() == reflect.Float64)
+	fmt.Println("kind is float64:",v.Kind())
+	fmt.Println("value is :",v.Float())
 }

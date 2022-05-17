@@ -196,7 +196,7 @@ func repeatedlyLock() {
 	fmt.Println("The lock is unlocked. (G0)")
 	time.Sleep(time.Second)
 }
-func main() {
+func mainse() {
 	//s1 := "100"
 	//i1, err := strconv.Atoi(s1)
 	//if err != nil {
