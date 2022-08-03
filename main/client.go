@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/segmentio/encoding/json"
+	"gogogo/basicfeature"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -10,14 +11,13 @@ import (
 
 type client struct {
 }
-var clientMap map[string] client
 
+var clientMap map[string]client
 
 //func (c *client) insertLightningConnectorIntoComputer(com computer) {
 //	fmt.Println("Client inserts Lightning connector into computer.")
 //	com.insertIntoLightningPort()
 //}
-
 
 func main() {
 	//clientMap = make(map[string] client)
@@ -77,8 +77,14 @@ func main() {
 	//	log.Printf("symbol: %s, price: %s", p.Symbol, p.Price)
 	//}
 
-	Test();
+	Test()
+	basicfeature.Basic()
+	done := make(chan bool)
+	data := make(chan int)
 
+	go basicfeature.Consumer(data, done)
+	go basicfeature.Producer(data)
+	<-done //阻塞，直到消费者发回结束信号 雨痕. Go语言学习笔记 (Chinese Edition) (Kindle Location 243). 电子工业出版社. Kindle Edition.
 	// Create default client
 	//client := binance.NewClient("API-KEY", "SECRET")
 	//
@@ -137,36 +143,36 @@ func Test() {
 	if err != nil {
 		log.Print(err)
 	}
-	result, _ := ioutil.ReadAll(resp.Body);
-	fmt.Println(string(result));
-	var repResult RepResult;
-	json.Unmarshal(result,&repResult);
-	fmt.Println("repResult is ",repResult)
-	jsonResult, _ := json.Marshal(repResult);
-	fmt.Println("jsonResult",jsonResult);
+	result, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println(string(result))
+	var repResult RepResult
+	json.Unmarshal(result, &repResult)
+	fmt.Println("repResult is ", repResult)
+	jsonResult, _ := json.Marshal(repResult)
+	fmt.Println("jsonResult", jsonResult)
 	defer resp.Body.Close()
 
 	fmt.Println("res: ", resp.Body)
 }
 
 type RepResult struct {
-	Status string `json:"status"`
-	Message string `json:"message"`
-	Result []Result `json:"result"`
+	Status  string   `json:"status"`
+	Message string   `json:"message"`
+	Result  []Result `json:"result"`
 }
 type Result struct {
-	BlockNumber string `json:"blockNumber"`
-	TimeStamp string `json:"timeStamp"`
-	Hash string `json:"hash"`
-	From string `json:"from"`
-	To string `json:"to"`
-	Value string `json:"value"`
+	BlockNumber     string `json:"blockNumber"`
+	TimeStamp       string `json:"timeStamp"`
+	Hash            string `json:"hash"`
+	From            string `json:"from"`
+	To              string `json:"to"`
+	Value           string `json:"value"`
 	ContractAddress string `json:"contractAddress"`
-	Input string `json:"input"`
-	Type string `json:"type"`
-	Gas string `json:"gas"`
-	GasUsed string `json:"gasUsed"`
-	TraceID string `json:"traceId"`
-	IsError string `json:"isError"`
-	ErrCode string `json:"errCode"`
+	Input           string `json:"input"`
+	Type            string `json:"type"`
+	Gas             string `json:"gas"`
+	GasUsed         string `json:"gasUsed"`
+	TraceID         string `json:"traceId"`
+	IsError         string `json:"isError"`
+	ErrCode         string `json:"errCode"`
 }
