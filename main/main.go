@@ -29,6 +29,12 @@ func copyArray(a ...int) {
 	}
 }
 
+func deferNest() {
+	defer println("one defer first appearance")
+	defer println("two defer second appearance")
+	panic("The program exception ...")
+}
+
 /**
  *
  */
@@ -63,4 +69,7 @@ func main() {
 
 	panic("The program is dead")
 	println("try to exit.") // unreached statement here.
+
+	defer func() { log.Println(recover()) }()
+	deferNest()
 }
