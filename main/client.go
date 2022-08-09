@@ -19,7 +19,7 @@ var clientMap map[string]client
 //	com.insertIntoLightningPort()
 //}
 
-func main() {
+func mainner() {
 	//clientMap = make(map[string] client)
 	//value,ok := clientMap["client"]
 	//if ok {
@@ -102,6 +102,8 @@ func main() {
 	//
 	//// Read ws
 	//msg, err := ws.Read()
+	f := basicfeature.Hello
+	basicfeature.Exec(f)
 }
 
 //func printShoeDetails(s iShoe) {
