@@ -59,6 +59,22 @@ func recoverProtectCode(x, y int) {
 	println("x/y=", z)
 }
 
+type N int
+
+func (n N) toString() string {
+	return fmt.Sprintf("%#x", n)
+}
+
+func (n N) value() {
+	n++
+	fmt.Printf("v: %p, %v\n", &n, n)
+}
+
+func (n *N) pointer() {
+	(*n)++
+	fmt.Printf("p: %p,%v\n", n, *n)
+}
+
 /**
  *
  */
@@ -226,4 +242,13 @@ func main() {
 	for s := range map2 {
 		println("map2 content ", s)
 	}
+
+	var num N = 25
+	println(num.toString())
+	//多级指针调用不可
+	//var number N = 30
+	//tp := &number
+	//tp2 := &tp
+	//tp2.value()   // this is illegal
+	//tp2.pointer() // this is illegal
 }
