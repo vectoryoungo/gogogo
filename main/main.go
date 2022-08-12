@@ -3,7 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"go/types"
 	"reflect"
+	"sync"
 	"unsafe"
 )
 
@@ -75,10 +77,101 @@ func (n *N) pointer() {
 	fmt.Printf("p: %p,%v\n", n, *n)
 }
 
+//指针类型的receiver必须是合法指针(包括nil)，才能获取实例地址.
+type X struct {
+}
+
+func (x *X) test() {
+	println("type X", x)
+}
+
+//综上，方法的receiver类型选择原则
+//要修改实例状态，用*T。
+//无须修改状态的小对象或固定值，建议用T。
+//大对象建议用*T，以减少复制成本。
+//引用类型、字符串、函数等指针包装对象，直接用T。
+//若包含Mutex等同步字段，用*T，避免因复制造成锁操作无效。
+//其他无法确定的情况，都用*T。
+//雨痕. Go语言学习笔记 (Chinese Edition) (Kindle Locations 1993-1995). 电子工业出版社. Kindle Edition.
+
+//anonymous type
+type data struct {
+	sync.Mutex
+	buf [1024]byte
+}
+
+type user struct {
+}
+
+type manager struct {
+	user user
+}
+
+func (user) toString() string {
+	return "user itself"
+}
+
+func (m manager) toString() string {
+	return m.user.toString() + "control by manager"
+}
+
+/**
+类型有一个与之相关的方法集（methodset），这决定了它是否实现某个接口。
+类型T方法集包含所有receiverT方法。
+类型*T方法集包含所有receiverT+*T方法。
+匿名嵌入S，T方法集包含所有receiverS方法。
+匿名嵌入*S，T方法集包含所有receiverS+*S方法。
+匿名嵌入S或*S，*T方法集包含所有receiverS+*S方法。
+雨痕. Go语言学习笔记 (Chinese Edition) (Kindle Locations 2009-2012). 电子工业出版社. Kindle Edition.
+下面无法获取TTT类对应的方法
+*/
+type S struct {
+}
+
+type T struct {
+	S
+}
+
+func (S) sVal() {
+
+}
+func (*S) sPtr() {
+
+}
+func (T) ttVal() {
+
+}
+func (*T) tPtr() {
+
+}
+
+func methodSet(inter interface{}) {
+	println("a ", inter)
+	tt := reflect.TypeOf(inter).NumMethod()
+	println("tt is ", tt)
+	//println("tt.NumMethod() ", tt.NumMethod())
+	//for i, n := 0, tt.NumMethod(); i < n; i++ {
+	//	m := tt.Method(i)
+	//	fmt.Println(m.Name, m.Type)
+	//}
+}
+
+type content int
+
+func (con content) String() string {
+	return fmt.Sprintf("data:%d ", con)
+}
+
 /**
  *
  */
-func main() {
+func mainstream() {
+
+	var ttt T
+	methodSet(ttt)
+	println("*****************************")
+	methodSet(&ttt)
+
 	var a *int = pointereturn()
 	println(a, *a)
 
@@ -251,4 +344,48 @@ func main() {
 	//tp2 := &tp
 	//tp2.value()   // this is illegal
 	//tp2.pointer() // this is illegal
+	var typeX *X
+	typeX.test()
+	//X{}.test()// this is illegal Cannot call a pointer method on 'X{}'
+	dd := data{}
+	dd.Lock() ////编译会处理为sync.(*Mutex).Lock()调用 雨痕. Go语言学习笔记 (Chinese Edition) (Kindle Locations 1999-2000). 电子工业出版社. Kindle Edition.
+	defer dd.Unlock()
+
+	var mana manager
+	println(mana.toString())
+	println(mana.user.toString())
+
+	var cont content = 15
+	var xunknow interface{} = cont
+
+	//转换为更具体的接口类型
+	if n, ok := xunknow.(fmt.Stringer); ok {
+		fmt.Println(n)
+	}
+
+	//转换为原始类型
+	if d2, ok := xunknow.(content); ok {
+		fmt.Println(d2)
+	}
+	//e := xunknow.(error)
+	//fmt.Println(e)
+
+	//var xlab interface{} = func(xlab int) string {
+	//	return fmt.Sprintf("d:%d ", xlab)
+	//}
+	var xlab interface{} = nil
+	switch v := xlab.(type) {
+	case types.Nil:
+		println("nil")
+	case *int:
+		println(*v)
+	case func(int) string:
+		println("enter here")
+		println(v(100))
+	case fmt.Stringer:
+		fmt.Println(v)
+	default:
+		println("v is ", v)
+		println("unknown")
+	}
 }
